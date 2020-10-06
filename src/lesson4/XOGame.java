@@ -1,11 +1,12 @@
 package lesson4;
 
+import java.lang.reflect.Array;
 import java.util.Random;
 import java.util.Scanner;
 
 public class XOGame {
-    static final int SIZE = 3;
-    //    static final int DOTS_TO_WIN = 3;
+    static final int SIZE = 5;
+    static final int DOTS_TO_WIN = 4;
     static final char DOT_X = 'X';
     static final char DOT_O = 'O';
     static final char DOT_EMPTY = '.';
@@ -19,23 +20,23 @@ public class XOGame {
 
         while (true) {
             humanTurn();
-            printMap();
-            if (checkWin(DOT_X)){
+            if (checkWin(DOT_X)) {
+                printMap();
                 System.out.println("Вы победили!");
                 break;
             }
-            if(isFool()){
+            if (isFool()) {
                 System.out.println("Ничья!");
                 break;
             }
 
             compTurn();
             printMap();
-            if (checkWin(DOT_O)){
+            if (checkWin(DOT_O)) {
                 System.out.println("Компьютер выиграл войну и помещает вас в Матрицу");
                 break;
             }
-            if(isFool()){
+            if (isFool()) {
                 System.out.println("Ничья!");
                 break;
             }
@@ -72,19 +73,46 @@ public class XOGame {
             System.out.println("Введите координаты X Y");
             x = scanner.nextInt() - 1;
             y = scanner.nextInt() - 1;
-        } while (!isCellCorrect(y,x));
+        } while (!isCellCorrect(y, x));
 
         map[y][x] = DOT_X;
     }
 
     static void compTurn() {
         int x, y;
-        do {
-            x = random.nextInt(SIZE);
-            y = random.nextInt(SIZE);
-        } while (!isCellCorrect(y,x));
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if(map[i][j] == DOT_EMPTY){
+                    map[i][j] = DOT_O;
+                    if (compCheckMove(i, j, DOT_O)) {
+                        return;
+                    } else {
+                        map[i][j] = DOT_EMPTY;
+                    }
+                }
+            }
+        }
 
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (map[i][j] == DOT_EMPTY) {
+                    map[i][j] = DOT_X;
+                    if (compCheckMove(i, j, DOT_X)) {
+                        map[i][j] = DOT_O;
+                        return;
+                    } else {
+                        map[i][j] = DOT_EMPTY;
+                    }
+                }
+            }
+        }
+
+        do {
+            y = random.nextInt(SIZE);
+            x = random.nextInt(SIZE);
+        } while (!isCellCorrect(y, x));
         map[y][x] = DOT_O;
+
     }
 
     static boolean isCellCorrect(int y, int x) {
@@ -94,10 +122,11 @@ public class XOGame {
         return map[y][x] == DOT_EMPTY;
     }
 
-    static boolean isFool(){
+
+    static boolean isFool() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                if (map[i][j] == DOT_EMPTY){
+                if (map[i][j] == DOT_EMPTY) {
                     return false;
                 }
             }
@@ -105,19 +134,55 @@ public class XOGame {
         return true;
     }
 
-    static boolean checkWin(char c){
-        if (map[0][0]==c&&map[0][1]==c&&map[0][2]==c){ return true; }
-        if (map[1][0]==c&&map[1][1]==c&&map[1][2]==c){ return true; }
-        if (map[2][0]==c&&map[2][1]==c&&map[2][2]==c){ return true; }
-
-        if (map[0][0]==c&&map[1][0]==c&&map[2][0]==c){ return true; }
-        if (map[0][1]==c&&map[1][1]==c&&map[2][1]==c){ return true; }
-        if (map[0][2]==c&&map[1][2]==c&&map[2][2]==c){ return true; }
-
-        if (map[0][0]==c&&map[1][1]==c&&map[2][2]==c){ return true; }
-        if (map[2][0]==c&&map[1][1]==c&&map[0][2]==c){ return true; }
-        
+    static boolean checkWin(char c) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (checkLine(i, j, 0, 1, c)) {
+                    return true;
+                }
+                if (checkLine(i, j, 1, 0, c)) {
+                    return true;
+                }
+                if (checkLine(i, j, 1, 1, c)) {
+                    return true;
+                }
+                if (checkLine(i, j, -1, 1, c)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
+
+    static boolean checkLine(int y, int x, int dy, int dx, char c) {
+        if (y + dy * DOTS_TO_WIN > SIZE || y + dy * DOTS_TO_WIN < 0 || x + dx * DOTS_TO_WIN > SIZE) {
+            return false;
+        }
+        for (int i = 0; i < DOTS_TO_WIN; i++) {
+            if (map[y][x] != c) {
+                return false;
+            }
+            y += dy;
+            x += dx;
+        }
+        return true;
+    }
+
+    static boolean compCheckMove(int i, int j, char c) {
+        if (checkLine(i, j, 0, 1, c)) {
+            return true;
+        }
+        if (checkLine(i, j, 1, 0, c)) {
+            return true;
+        }
+        if (checkLine(i, j, 1, 1, c)) {
+            return true;
+        }
+        if (checkLine(i, j, -1, 1, c)) {
+            return true;
+        }
+        return false;
+    }
+
 
 }
