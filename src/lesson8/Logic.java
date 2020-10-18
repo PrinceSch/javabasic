@@ -13,29 +13,28 @@ public class Logic {
 
     static char[][] map;
     static boolean finishedGame;
+    static String winner;
 
     static Random random = new Random();
 
     public static void go() {
         finishedGame = true;
         if (checkWin(DOT_X)) {
-            printMap();
-            System.out.println("Вы победили!");
+            winner = "You";
             return;
         }
         if (isFool()) {
-            System.out.println("Ничья!");
+            winner = "Nobody";
             return;
         }
 
         compTurn();
-        printMap();
         if (checkWin(DOT_O)) {
-            System.out.println("Компьютер выиграл войну и помещает вас в Матрицу");
+            winner = "Computer";
             return;
         }
         if (isFool()) {
-            System.out.println("Ничья!");
+            winner = "Nobody";
             return;
         }
         finishedGame = false;
@@ -50,20 +49,6 @@ public class Logic {
         }
     }
 
-    static void printMap() {
-        System.out.print("  ");
-        for (int i = 0; i < size; i++) {
-            System.out.print((i + 1) + " ");
-        }
-        System.out.println();
-        for (int i = 0; i < size; i++) {
-            System.out.print((i + 1) + " ");
-            for (int j = 0; j < size; j++) {
-                System.out.print(map[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
 
     static void humanTurn(int x, int y) {
         if(isCellCorrect(y, x)){
@@ -178,6 +163,5 @@ public class Logic {
         }
         return false;
     }
-
 
 }

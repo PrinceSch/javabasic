@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.logging.Logger;
 
 public class GameField extends JPanel {
     private GameWindow gameWindow;
@@ -27,6 +28,9 @@ public class GameField extends JPanel {
 
                 if (!Logic.finishedGame) {
                     Logic.humanTurn(cellX, cellY);
+                }
+                if(Logic.finishedGame){
+                    gameWindow.gameResult(Logic.winner);
                 }
                 repaint();
             }
@@ -56,22 +60,31 @@ public class GameField extends JPanel {
         cellWidth = panelWidth / fieldSize;
         cellHeight = panelHeight / fieldSize;
 
-        //TODO объединить в один цикл
         for (int i = 1; i < fieldSize; i++) {
             int y = i * cellHeight;
             g.drawLine(0, y, panelWidth, y);
-        }
-
-        for (int i = 1; i < fieldSize; i++) {
             int x = i * cellHeight;
             g.drawLine(x, 0, x, panelHeight);
         }
+
+        for (int i = 0; i < fieldSize; i++) {
+            for (int j = 0; j < fieldSize; j++) {
+                if (Logic.map[i][j] == Logic.DOT_X){
+                    drawX(g,j,i);
+                }
+                if (Logic.map[i][j] == Logic.DOT_O){
+                    drawO(g,j,i);
+                }
+            }
+        }
+
     }
 
     void drawX(Graphics g, int x, int y) {
         g.setColor(Color.GREEN);
         ((Graphics2D) g).setStroke(new BasicStroke(5));
         g.drawLine(x * cellWidth, y * cellHeight, (x + 1) * cellWidth, (y + 1) * cellHeight);
+        g.drawLine((x + 1) * cellWidth, y * cellHeight, x * cellWidth, (y + 1) * cellHeight);
     }
     void drawO(Graphics g, int x, int y) {
         g.setColor(Color.RED);
