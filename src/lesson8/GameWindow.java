@@ -42,4 +42,23 @@ public class GameWindow extends JFrame {
     public void startNewGame(int gameMode, int fieldSize, int winStreak) {
         gameField.startNewGame(gameMode, fieldSize, winStreak);
     }
+
+    public void gameResult (String s){
+        JDialog result = new JDialog();
+        int windowX = WINDOW_X+200;
+        int windowY = WINDOW_Y+200;
+        int width = 200;
+        int height = 100;
+
+        result.setTitle("Game finished");
+        result.setBounds(windowX,windowY,width,height);
+        result.add(new JLabel(s+" wins"),BorderLayout.CENTER);
+        JButton buttonExit = new JButton("Exit");
+        buttonExit.addActionListener(e -> {
+            System.exit(0);
+        });
+        result.add(buttonExit,BorderLayout.SOUTH);
+        result.setVisible(true);
+    }
+
 }
